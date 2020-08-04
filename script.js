@@ -14,6 +14,11 @@
       .then(res => res.json())
       // .then(res => console.log(res.data.videos))
       .then(res => app.SetVideos(res.data.videos))//app._data.vids = res.data.videos.slice(0,0) )
+
+
+  fetch(`${location.href}?action=posiciones`)
+    .then(res => res.json())
+    .then(res => app.SetCursores(res))
 })();
 
 
@@ -33,7 +38,9 @@ Sit amet facilisis magna etiam tempor orci eu. Cursus mattis molestie a iaculis 
 Placerat in egestas erat imperdiet sed euismod nisi porta lorem. Facilisis gravida neque convallis a cras semper. Velit euismod in pellentesque massa placerat. Eu lobortis elementum nibh tellus molestie nunc non blandit massa. Iaculis eu non diam phasellus vestibulum lorem sed risus ultricies. Duis at consectetur lorem donec massa sapien faucibus et. Nulla facilisi morbi tempus iaculis urna id. Turpis massa tincidunt dui ut. Ultrices neque ornare aenean euismod elementum. Integer feugiat scelerisque varius morbi enim nunc faucibus a pellentesque. Vel elit scelerisque mauris pellentesque pulvinar pellentesque. Sit amet volutpat consequat mauris nunc. Aenean sed adipiscing diam donec adipiscing tristique risus nec feugiat.`,
         vids:[],
         openedVid: {titulo:"", texto:{html:""}, thumb:{url:""}, video   :{url:""}},
-        modalClosed: true
+        modalClosed: true,
+        cursores: [],
+        cursoresIndex: 0
     },
 
 
@@ -49,6 +56,19 @@ Placerat in egestas erat imperdiet sed euismod nisi porta lorem. Facilisis gravi
         CloseVideo: function(){
             this.modalClosed = true;
             this.$refs.videoPlayer.pause()
+        },
+
+        SetCursores: function(newCursores){
+            let temp = [];
+            for(let i = 0; i < newCursores.length; i++){
+                temp.push(JSON.parse(newCursores[i].pos));
+            }
+            console.log(temp)
+            this.cursores = temp
+        },
+        NextTick: function(){
+            this.cursoresIndex++;
+            this.cursoresIndex = this.cursoresIndex % (this.cursores[0].length)
         }
     }
 })
@@ -93,38 +113,54 @@ function animate() {
 
 var xpos;
 var ypos;
+var ev
 function findScreenCoords(mouseEvent)
 {
+    ev=mouseEvent
   if (mouseEvent)
   {
     //FireFox
-    xpos = mouseEvent.screenX;
-    ypos = mouseEvent.screenY;
+    xpos = mouseEvent.pageX;
+    ypos = mouseEvent.pageY;
   }
   else
   {
     //IE
-    xpos = window.event.screenX;
-    ypos = window.event.screenY;
+    xpos = window.event.pageX;
+    ypos = window.event.pageY;
   }
 }
 document.getElementsByTagName("body")[0].onmousemove = findScreenCoords;
 
-var cantPosiciones = 100;
+var cantPosiciones = 50;
 var posiciones = []
 var savedPosiciones = false;
 function tick(){
     // console.log(xpos/window.innerWidth,ypos/window.innerHeight)
     if(posiciones.length < cantPosiciones){
-        posiciones.push([xpos/window.innerWidth,ypos/window.innerHeight])
+        if(!isNaN(xpos) && !isNaN(ypos)){
+            posiciones.push([
+                xpos/window.innerWidth,
+                ypos/window.innerHeight])
+        }
     }else{
         if(!savedPosiciones){
-            console.log(posiciones)
-            savedPosiciones = true;
+
             // GUARDAR EN DB
+            superagent
+               .post('')
+               .send({ coso: 'hola', pos: JSON.stringify(posiciones)})
+               .type("form")
+               .set('Accept', 'application/json')
+               .then(res => {
+                  console.log(res.text)
+               });
+           console.log("posiciones enviadas")
+           savedPosiciones = true;
         }
     }
-
+    // Muevo las animaciones actuales
+    app.NextTick();
 }
 
 // requestAnimationFrame polyfill

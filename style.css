@@ -175,3 +175,17 @@ video{
     height: 100vh;
     overflow: hidden;
 }
+
+
+.cursores{
+    position: absolute;
+}
+.cursor{
+    transition: all 1s;
+    position: relative;
+    width: 5px;
+    height: 5px;
+    background: #fff;
+    z-index: 99999999999;
+    border-radius: 50%;
+}

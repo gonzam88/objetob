@@ -1,9 +1,9 @@
 <?php
 require './medoo/src/Medoo.php';
 use Medoo\Medoo;
+include 'config.php';
 
-if(isset($_GET["coso"])){
-     include 'config.php';
+if(isset($_POST["coso"])){
     // Initialize
     $database = new Medoo([
         'database_type' => 'mysql',
@@ -13,13 +13,30 @@ if(isset($_GET["coso"])){
         'password'      => $config["dbpass"]
     ]);
 
-    $hash = md5($config["sec"]);
+    // $hash = md5($config["sec"]);
     $time = date("Y-m-d H:i:s", time());
 
     $database->insert('cursores', [
-        'pos'   => $_GET["pos"],
+        'pos'   => $_POST["pos"],
         'time'  => $time
     ]);
+
+    echo "posiciones guardadas";
+    exit;
+}
+
+if(isset($_GET["action"]) && $_GET["action"] == "posiciones"){
+    // Initialize
+    $database = new Medoo([
+        'database_type' => 'mysql',
+        'database_name' => $config["dbname"],
+        'server'        => 'localhost',
+        'username'      => $config["dbuser"],
+        'password'      => $config["dbpass"]
+    ]);
+    $data = $database->select("cursores", ["pos"]);
+    echo json_encode($data);
+    exit;
 }
 
 
@@ -42,6 +59,13 @@ if(isset($_GET["coso"])){
 
 
 <div id="app" :class="{fullscreen: !modalClosed}" v-cloak>
+
+    <div id="cursores">
+        <div class="cursor" v-for="c in cursores" v-bind:style="{ left: `${c[cursoresIndex][0] * window.innerWidth}px`, top: `${c[cursoresIndex][1] * window.innerHeight}px` }">
+        </div>
+    </div>
+
+
     <div id="intro" class="">
         <h1>{{titulo}}</h1>
     </div>
@@ -77,6 +101,7 @@ if(isset($_GET["coso"])){
 
 
     </div>
+
 
 
 
