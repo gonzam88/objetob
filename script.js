@@ -40,7 +40,8 @@ Placerat in egestas erat imperdiet sed euismod nisi porta lorem. Facilisis gravi
         openedVid: {titulo:"", texto:{html:""}, thumb:{url:""}, video   :{url:""}},
         modalClosed: true,
         cursores: [],
-        cursoresIndex: 0
+        cursoresIndex: 0,
+        indexIncrementing: true,
     },
 
 
@@ -63,12 +64,21 @@ Placerat in egestas erat imperdiet sed euismod nisi porta lorem. Facilisis gravi
             for(let i = 0; i < newCursores.length; i++){
                 temp.push(JSON.parse(newCursores[i].pos));
             }
-            console.log(temp)
+            // console.log(temp)
             this.cursores = temp
         },
         NextTick: function(){
-            this.cursoresIndex++;
-            this.cursoresIndex = this.cursoresIndex % (this.cursores[0].length)
+            if(this.indexIncrementing){
+                this.cursoresIndex++;
+                if(this.cursoresIndex == cantPosiciones-1){
+                    this.indexIncrementing = false
+                }
+            }else{
+                this.cursoresIndex--;
+                if(this.cursoresIndex <= 0){
+                    this.indexIncrementing = true
+                }
+            }
         }
     }
 })
@@ -99,11 +109,9 @@ function animate() {
     elapsed = now - then;
     // if enough time has elapsed, draw the next frame
     if (elapsed > fpsInterval) {
-
         // Get ready for next frame by setting then=now, but also adjust for your
         // specified fpsInterval not being a multiple of RAF's interval (16.7ms)
         then = now - (elapsed % fpsInterval);
-
         // Put your drawing code here
         tick();
     }
@@ -113,10 +121,8 @@ function animate() {
 
 var xpos;
 var ypos;
-var ev
 function findScreenCoords(mouseEvent)
 {
-    ev=mouseEvent
   if (mouseEvent)
   {
     //FireFox
@@ -145,7 +151,6 @@ function tick(){
         }
     }else{
         if(!savedPosiciones){
-
             // GUARDAR EN DB
             superagent
                .post('')

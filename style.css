@@ -131,7 +131,7 @@ p{
     background: #000;
     top: 0;
     left: 0;
-    z-index: 9999;
+    z-index: 99999;
     overflow: hidden;
 }
 
@@ -181,11 +181,11 @@ video{
     position: absolute;
 }
 .cursor{
-    transition: all 1s;
-    position: relative;
-    width: 5px;
-    height: 5px;
-    background: #fff;
-    z-index: 99999999999;
-    border-radius: 50%;
+    transition: all .7s;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    z-index: 99999;
+    background: url('./assets/cursor.png');
+    background-size: contain;
 }
