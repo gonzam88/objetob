@@ -62,7 +62,7 @@ Placerat in egestas erat imperdiet sed euismod nisi porta lorem. Facilisis gravi
         SetCursores: function(newCursores){
             let temp = [];
             for(let i = 0; i < newCursores.length; i++){
-                temp.push(JSON.parse(newCursores[i].pos));
+                temp.push(JSON.parse(newCursores[i]));
             }
             // console.log(temp)
             this.cursores = temp
@@ -146,8 +146,8 @@ function tick(){
     if(posiciones.length < cantPosiciones){
         if(!isNaN(xpos) && !isNaN(ypos)){
             posiciones.push([
-                xpos/window.innerWidth,
-                ypos/window.innerHeight])
+                parseFloat((xpos/window.innerWidth).toFixed(4)),
+                parseFloat((ypos/window.innerHeight).toFixed(4))])
         }
     }else{
         if(!savedPosiciones){

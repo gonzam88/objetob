@@ -34,7 +34,10 @@ if(isset($_GET["action"]) && $_GET["action"] == "posiciones"){
         'username'      => $config["dbuser"],
         'password'      => $config["dbpass"]
     ]);
-    $data = $database->select("cursores", ["pos"]);
+    $data = $database->select("cursores", "pos",[
+        "ORDER" => "id",
+        "LIMIT" => 50
+    ]);
     echo json_encode($data);
     exit;
 }
